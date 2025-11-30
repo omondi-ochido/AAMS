@@ -323,15 +323,11 @@ DATABASES = {
 python manage.py test
 ```
 
-## 📝 License
 
-[Your License Here]
 
-## 👥 Contributors
-
-[Your Name/Team]
 
 ## 📞 Support
 
-For support, email [your-email] or open an issue in the repository.
+For support, email omoshjagem@gmail.com or open an issue in the repository.
+
 
