@@ -1,0 +1,55 @@
+services:
+  # Web Service
+  - type: web
+    name: aams-web
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn aams.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        value: aams.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: aams-db
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          name: aams-redis
+          type: redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          name: aams-redis
+          type: redis
+          property: connectionString
+      - key: REDIS_HOST
+        fromService:
+          name: aams-redis
+          type: redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          name: aams-redis
+          type: redis
+          property: port
+
+  # PostgreSQL Database
+  - type: pspg
+    name: aams-db
+    plan: starter
+    databaseName: aams
+    databaseUser: aams_user
+
+  # Redis (for Celery and Channels)
+  - type: redis
+    name: aams-redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
+
